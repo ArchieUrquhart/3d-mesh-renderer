@@ -4,6 +4,24 @@ import math
 
 #SETUP
 #   import mesh from obj file 
+def readFile(file):
+  verts = []
+  faces = []
+  
+  with open(file,"r") as readfile:
+    line = readfile.readline().rstrip('\n')
+    
+    while line:
+      items = line.split(" ")
+      if items[0] = "v":
+        verts.append((float(items[1]), float(items[2]) ,float(items[3])))
+      elif items[0] = "f":
+        faces.append((int(items[1]), int(items[2]) ,int(items[3])))
+
+      line = readfile.readline().rstrip('\n')
+      
+  return verts, faces
+  
 #   init points array
 #   init triangles array
 
