@@ -3,8 +3,8 @@ import numpy as np
 import math
 
 #SETUP
-#   import mesh from obj file 
-def readFile(file):
+# import mesh from obj file 
+def importObj(file):
   verts = []
   faces = []
   
@@ -21,14 +21,9 @@ def readFile(file):
       line = readfile.readline().rstrip('\n')
       
   return verts, faces
-  
-#   init points array
-#   init triangles array
 
-#   init triangles
 
-#   define rotation matricies
-
+# define rotation matricies
 def rotmatX(angle):
   sin0 = math.sin(angle)
   cos0 = math.cos(angle)
