@@ -10,6 +10,41 @@ import math
 #   init triangles
 
 #   define rotation matricies
+
+def rotmatX(angle):
+  sin0 = math.sin(angle)
+  cos0 = math.cos(angle)
+  
+  Rx = np.matrix([[1,      0,      0],
+                  [0,    cos0, -sin0],
+                  [0,    sin0,  cos0]])
+  
+  return Rx
+
+
+def rotmatY(angle):
+  sin0 = math.sin(angle)
+  cos0 = math.cos(angle)
+  
+  Ry = np.matrix([[cos0,   0,   sin0],
+                  [0,      1,      0],
+                  [-sin0,  0,   cos0]])
+  return Ry
+
+
+def rotmatZ(angle):
+  sin0 = math.sin(angle)
+  cos0 = math.cos(angle)
+  
+  Rz = np.matrix([[cos0,  -sin0,   0],
+                  [sin0,  cos0,    0],
+                  [0,      0,      1]])
+
+  return Rz
+  
+
+
+
 #   define projection matrix
 
 
