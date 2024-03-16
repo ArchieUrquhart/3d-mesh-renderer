@@ -49,27 +49,27 @@ def importObj(file):
 
 
 def genGube():
-  points = [(0.0, 0.0, 0.0),
-            (1.0, 0.0, 0.0),
-            (0.0, 1.0, 0.0),
-            (1.0, 1.0, 0.0),
-            (0.0, 0.0, 1.0),
-            (1.0, 0.0, 1.0),
-            (0.0, 1.0, 1.0),
-            (1.0, 1.0, 1.0)]
+  points = [(0.0, 0.0, 0.0),#0
+            (1.0, 0.0, 0.0),#1
+            (0.0, 1.0, 0.0),#2#
+            (1.0, 1.0, 0.0),#3#
+            (0.0, 0.0, 1.0),#4
+            (1.0, 0.0, 1.0),#5
+            (0.0, 1.0, 1.0),#6#
+            (1.0, 1.0, 1.0)]#7#
   
-  triangles = [(0,2,1),
-               (3,1,2),
-               (1,3,5),
-               (7,5,3),
-               (5,7,4),
-               (6,4,7),
-               (6,2,7),
-               (3,7,2),
-               (0,4,2),
-               (6,2,4),
-               (0,1,4),
-               (5,4,1),]
+  triangles = [(0,2,1),#0
+               (3,1,2),#1
+               (1,3,5),#2
+               (7,5,3),#3
+               (5,7,4),#4
+               (6,4,7),#5
+               (6,7,2),#6
+               (3,2,7),#7
+               (0,4,2),#8
+               (6,2,4),#9
+               (0,1,4),#10
+               (5,4,1),]#11
   
   return points, triangles
 
@@ -132,11 +132,12 @@ def rotmatZ(vert,angle):
   return (x,y,z)
 
 
-# project point
+# project any 3d point to 2d screen
 def projectPoint(point):
+  zdist = 2
   x = point[0]
   y = point[1]
-  z = point[2] + 2
+  z = point[2] + zdist
 
   #get aspect ratio
   asp = WIDTH / HIEGHT
@@ -160,7 +161,7 @@ def projectPoint(point):
     
   #find screen co-ords of projected points with 0,0 as screen centre 
   projx = projx * asp * scale + WIDTH/2
-  projy = projy * scale + HIEGHT/2
+  projy = projy * -scale + HIEGHT/2
 
   projPoint = (projx,projy)
 
@@ -168,8 +169,62 @@ def projectPoint(point):
 
 
 
+def normalize(vector):
+  #calculates magnitude of vector then divides up components by said magnitute
+  mag = math.sqrt(vector[0] **2 + vector[1] **2 + vector[2] **2)
+  x = vector[0] / mag
+  y = vector[1] / mag
+  z = vector[2] / mag
+
+  normalized = np.array([x,y,z])
+
+  return normalized
+
+# gets the vector between two given points
+def getVector(a,b):
+  x = b[0] - a[0]
+  y = b[1] - a[1]
+  z = b[2] - a[2]
+
+  return [x, y, z]
+
+
+def getNormal(triangle):
+  #gets all verticies of the given triangle
+  p0 = verts[triangle[0]]
+  p1 = verts[triangle[1]]
+  p2 = verts[triangle[2]]
+
+  #calcutes the vectors from the corder of triangle to the other points
+  v0 = np.array(getVector(p0,p1))
+  v1 = np.array(getVector(p0,p2))
+
+  normal = np.cross(v0, v1)
+  #normal = normalize(normal)
+
+  return normal
+
+
+def checkTris():
+  validtris = []
+  validverts = []
+
+  for triangle in tris:
+    camvec = np.array([verts[triangle[0]][0],verts[triangle[0]][1],verts[triangle[0]][2]+2])
+    normal = getNormal(triangle)
+    dotprod = np.dot(camvec, normal)
+
+    if dotprod < 0:
+      validtris.append(triangle)
+      for point in range(3):
+        validverts.append(verts[triangle[point]])
+
+  return validtris, validverts
+
 
 verts, tris = genGube()
+points = [None]*len(verts)
+
 
 while True:
 #INPUT DETECTION
@@ -180,16 +235,25 @@ while True:
       
   screen.fill(black)
 
+  
+  for i in range(len(verts)):
+    verts[i] = rotmatX(verts[i], math.pi/200)
+    verts[i] = rotmatY(verts[i], math.pi/150)
+    verts[i] = rotmatZ(verts[i], math.pi/300)
 
-  for vert in verts:
-    point = projectPoint(vert)
-    pygame.draw.circle(screen,white,point,5)
-
+  validtris, validverts = checkTris()
 
   for i in range(len(verts)):
-    verts[i] = rotmatX(verts[i], math.pi/300)
-    #verts[i] = rotmatY(verts[i], math.pi/150)
-    verts[i] = rotmatZ(verts[i], math.pi/200)
+    if verts[i] in validverts:
+      points[i] = projectPoint(verts[i])
+      pygame.draw.circle(screen,white,points[i],3)
+
+
+  for triangle in tris:
+    if triangle in validtris:
+      verticies = [points[triangle[0]], points[triangle[1]], points[triangle[2]]]
+      pygame.draw.polygon(screen, white, verticies, 3)
+
 
   clock.tick(frameRate)
   pygame.display.update()
