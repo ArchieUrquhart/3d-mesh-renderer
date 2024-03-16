@@ -257,29 +257,3 @@ while True:
 
   clock.tick(frameRate)
   pygame.display.update()
-
-
-
-#CALCULATIONS
-                    #   rotate triangles
-                    #       numpy matmul with each point againt rot mat
-
-#   find normals
-#       find edge vectors
-#       numpy cross product
-
-#   project valid triangles
-#       numpy dot prod with vector to "camera"
-#       if dot prod < 0 then comense
-                    #       project points to screen space
-
-#   shade triangles
-#       init light vector(s)
-#       Shade triangles depending on normal light dot prod
-
-
-#DRAW TRIANGLES
-
-
-#OPTIMIZATIONS
-
